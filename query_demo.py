@@ -1,14 +1,29 @@
 from google.cloud import bigquery
 from google.oauth2 import service_account
-credentials = service_account.Credentials.from_service_account_file('credentials.json')
 
-project_id = 'savvy-courage-367218'
-client = bigquery.Client(credentials= credentials,project=project_id)
+def query_db(role, person):
+   credentials = service_account.Credentials.from_service_account_file('credentials.json')
 
-query_job = client.query("""
-   SELECT *
-   FROM bigquery-public-data.imdb.reviews
-   LIMIT 1000 """)
+   project_id = 'savvy-courage-367218'
+   client = bigquery.Client(credentials= credentials,project=project_id)
 
-results = query_job.result() # Wait for the job to complete.
-print(results.to_dataframe())
+   query_statement = """
+   SELECT name.primary_name, coalesce(name.nconst, film.{0}) as {0}, film.tconst, rate.reviewer_rating, rate.movie_id
+   FROM `bigquery-public-data.imdb.name_basics` name 
+   INNER JOIN `bigquery-public-data.imdb.title_crew` film 
+   ON name.nconst = film.{0} 
+   LEFT JOIN `bigquery-public-data.imdb.reviews` rate
+   ON rate.movie_id = film.tconst
+   WHERE name.primary_name LIKE '{1}' AND rate.reviewer_rating IS NOT NULL;
+   """.format(role, person)
+
+   query_job = client.query(query_statement)
+
+
+   results = query_job.result() 
+   df = results.to_dataframe()
+   avg = df[['reviewer_rating']].sum()[0]/df.shape[0]
+   result = f'{role[:-1]} {person} has an average rating of {avg}'
+   return result
+   
+
