@@ -17,6 +17,9 @@ The first step is to take in the arguments from the user using a command line to
 
 <img width="1000" img height="700" alt="proj1_diagram" src="Screen Shot 2022-11-06 at 7.53.57 PM.png">
 
+<img width="1019" alt="proj1_diagram" src="Screen Shot 2022-11-06 at 7.53.57 PM.png">
+
+
 ### Command Line Tool
 
 To run this program, we can run the command line prompt: 
