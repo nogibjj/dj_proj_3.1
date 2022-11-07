@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import click
-from query_demo import query_db
+from query_demo import query_ratings, query_numrating, query_total_reviews
 
 # build a click group
 @click.group()
@@ -21,9 +21,15 @@ def cli():
     default="directors",
     help="Role of person (writer/director)",
 )
+
+
 def cli_rating(person, role):
-    """Execute prediction"""
-    rating = query_db(role, person)
+    """Execute rating extraction"""
+    total_movies = query_total_reviews(role, person)
+    num_rating = query_numrating(role, person)
+    rating = query_ratings(role, person)
+    print(total_movies)
+    print(num_rating)
     print(rating)
 
 
